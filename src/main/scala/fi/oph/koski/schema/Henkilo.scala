@@ -10,7 +10,7 @@ object Henkilö {
   type Oid = String
   type Hetu = String
   def withOid(oid: String) = OidHenkilö(oid)
-  def apply(hetu: String, etunimet: String, kutsumanimi: String, sukunimi: String) = UusiHenkilö(Some(hetu), etunimet, kutsumanimi, sukunimi)
+  def apply(hetu: String, etunimet: String, kutsumanimi: String, sukunimi: String) = UusiHenkilö(hetu, etunimet, kutsumanimi, sukunimi)
   def isHenkilöOid(s: String) = s.matches("""1\.2\.246\.562\.24\.\d{11}""")
 }
 
@@ -38,7 +38,7 @@ case class TäydellisetHenkilötiedot(
   @KoodistoUri("maatjavaltiot2")
   kansalaisuus: Option[List[Koodistokoodiviite]]
 ) extends HenkilöWithOid with Henkilötiedot {
-  def vainHenkilötiedot = UusiHenkilö(hetu, etunimet, kutsumanimi, sukunimi)
+  def vainHenkilötiedot = UusiHenkilö(hetu.getOrElse(""), etunimet, kutsumanimi, sukunimi)
   def toHenkilötiedotJaOid = HenkilötiedotJaOid(oid, hetu, etunimet, kutsumanimi, sukunimi)
 }
 
@@ -64,11 +64,11 @@ case class HenkilötiedotJaOid(
 
 @Description("Henkilö, jonka oppijanumero 'oid' ei ole tiedossa. Tietoja syötettäessä luodaan mahdollisesti uusi henkilö Henkilöpalveluun, jolloin henkilölle muodostuu oppijanumero")
 case class UusiHenkilö(
-  hetu: Option[String],
+  hetu: String,
   etunimet:String,
   kutsumanimi: String,
   sukunimi: String
-) extends Henkilö with Henkilötiedot
+) extends Henkilö
 
 @Title("Henkilö-OID")
 @Description("Henkilö, jonka oppijanumero 'oid' on tiedossa. Tietoja syötettäessä henkilö haetaan henkilöpalvelusta")
